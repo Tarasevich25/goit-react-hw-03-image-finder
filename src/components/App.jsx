@@ -1,16 +1,116 @@
-export const App = () => {
-  return (
-    <div
-      style={{
-        height: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        fontSize: 40,
-        color: '#010101'
-      }}
-    >
-      React homework template
-    </div>
-  );
-};
+import { Component } from 'react';
+import fetchImages from 'utils/fetchImages';
+import Searchbar from './Searchbar';
+import ImageGallery from './ImageGallery';
+import Button from './Button';
+import Loader from './Loader';
+import Modal from './Modal';
+// import Container from './Container';
+
+class App extends Component {
+  state = {
+    searchQuery: '',
+    page: 1,
+    images: [],
+    isLoading: false,
+    showModal: false,
+    modalImage: '',
+    imageAlt: '',
+    showButton: false,
+  };
+
+  componentDidUpdate(_, prevState) {
+    const { searchQuery, page } = this.state;
+
+    if (prevState.searchQuery !== searchQuery || prevState.page !== page) {
+      this.fetch();
+    }
+  }
+
+  fetch = async () => {
+    const { searchQuery, page } = this.state;
+    this.setState({ isLoading: true });
+
+    try {
+      const response = await fetchImages(searchQuery, page);
+      const newImages = response.data.hits.map(image => ({
+        id: image.id,
+        key: image.id,
+        webformatURL: image.webformatURL,
+        largeImageURL: image.largeImageURL,
+        tags: image.tags,
+      }));
+
+      this.setState(prevState => ({
+        images: [...prevState.images, ...newImages],
+        showButton: page < Math.ceil(response.data.totalHits / 12),
+      }));
+    } catch (error) {
+      console.error('Error while fetching images', error);
+    } finally {
+      this.setState({ isLoading: false });
+    }
+  };
+
+  handleSearch = query => {
+    this.setState({
+      searchQuery: query,
+      page: 1,
+      images: [],
+    });
+  };
+
+  onGetLargeImage = event => {
+    this.setState({ modalImage: event });
+  };
+
+  largeImageUrl = event => {
+    this.setState({ imageAlt: event });
+  };
+
+  handleLoadMore = () => {
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+    }));
+  };
+
+  handleGetLargeImage = image => {
+    this.setState({ modalImage: image });
+  };
+
+  toggleModal = () => {
+    this.setState(({ showModal }) => ({ showModal: !showModal }));
+    console.log('open modal');
+  };
+
+  render() {
+    const { images, isLoading, showModal, modalImage, showButton} = this.state;
+
+    return (
+      <div>
+        <Searchbar onSubmit={this.handleSearch} />
+
+        <>
+          {images.length > 0 && (
+            <ImageGallery
+              images={images}
+              onGetLargeImage={this.handleGetLargeImage}
+              toggleModal={this.toggleModal}
+            />
+          )}
+
+          {isLoading && <Loader />}
+
+          {showButton &&
+            <Button onLoadMore={this.handleLoadMore} />
+          }
+        </>
+        {showModal && (
+          <Modal onClose={this.toggleModal} modalImage={modalImage} />
+        )}
+      </div>
+    );
+  }
+}
+
+export default App;
