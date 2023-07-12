@@ -1,6 +1,7 @@
 import ImageGalleryItem from '../ImageGalleryItem';
 import css from './ImageGallery.module.css';
 import { nanoid } from 'nanoid';
+import PropTypes from 'prop-types';
 
 const ImageGallery = ({ images, onGetLargeImage, toggleModal }) => {
   return (
@@ -20,3 +21,8 @@ const ImageGallery = ({ images, onGetLargeImage, toggleModal }) => {
 };
 
 export default ImageGallery;
+
+ImageGallery.propTypes = {
+  onGetLargeImage: PropTypes.func.isRequired,
+  toggleModal: PropTypes.func.isRequired,
+};
