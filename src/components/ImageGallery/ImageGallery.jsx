@@ -1,6 +1,5 @@
 import ImageGalleryItem from '../ImageGalleryItem';
 import css from './ImageGallery.module.css';
-import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
 
 const ImageGallery = ({ images, onGetLargeImage, toggleModal }) => {
@@ -8,7 +7,7 @@ const ImageGallery = ({ images, onGetLargeImage, toggleModal }) => {
     <ul className={css.ImageGallery}>
       {images.map(({ webformatURL, tags, largeImageURL }) => (
         <ImageGalleryItem
-          key={nanoid()}
+          key={images.id}
           smallImgURL={webformatURL}
           alt={tags}
           onGetLargeImage={onGetLargeImage}
