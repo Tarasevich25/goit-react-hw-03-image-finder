@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import css from './Searchbar.module.css';
 import { GoSearch } from 'react-icons/go';
 import { alertEmptySearch } from '../../utils/alert'; // Import the alertEmptySearch function
+import PropTypes from 'prop-types';
 
 class Searchbar extends Component {
   state = {
@@ -46,3 +47,8 @@ class Searchbar extends Component {
 }
 
 export default Searchbar;
+
+Searchbar.propTypes = {
+  handleInputChange: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
+};
