@@ -22,11 +22,11 @@ const ImageGallery = ({ images, onGetLargeImage, toggleModal }) => {
 export default ImageGallery;
 
 ImageGallery.propTypes = {
-  images: PropTypes.array({
+  images: PropTypes.arrayOf(PropTypes.shape({
     webformatURL: PropTypes.string.isRequired,
     tags: PropTypes.string.isRequired,
     largeImageURL: PropTypes.string.isRequired,
-  }),
+  })),
   onGetLargeImage: PropTypes.func.isRequired,
   toggleModal: PropTypes.func.isRequired,
 };
